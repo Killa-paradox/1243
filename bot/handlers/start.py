@@ -20,7 +20,7 @@ async def cmd_start(message: Message, state: FSMContext, db: Database, db_user: 
         return
 
     await state.set_state(AuthStates.waiting_password)
-    await message.answer("Добро пожаловать в ALTShop Bot. Введите одноразовый пароль:")
+    await message.answer("👋 Добро пожаловать в ALTShop Bot.\nВведите одноразовый пароль:")
 
 
 @router.message(AuthStates.waiting_password)
@@ -40,6 +40,6 @@ async def auth_by_password(message: Message, state: FSMContext, db: Database) ->
 
     await state.clear()
     await message.answer(
-        f"Успешная авторизация. Ваша роль: {user['role']}",
+        f"✅ Успешная авторизация. Ваш ранг: {user['role']}",
         reply_markup=main_menu(user["role"]),
     )

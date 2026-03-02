@@ -33,6 +33,7 @@ async def main() -> None:
 
     auth_middleware = AuthMiddleware(db)
     dp.message.middleware(auth_middleware)
+    dp.callback_query.middleware(auth_middleware)
 
     dp.include_router(start.router)
     dp.include_router(common.router)

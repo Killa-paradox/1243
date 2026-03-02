@@ -12,17 +12,17 @@ router = Router()
 @router.callback_query(F.data == "sale_add")
 async def start_add_sale(callback: CallbackQuery, state: FSMContext, db_user: dict | None = None) -> None:
     if not db_user:
-        await callback.message.answer("Сначала авторизуйтесь через /start")
+        await callback.message.answer("🔐 Сначала авторизуйтесь через /start")
         await callback.answer()
         return
 
     if db_user["role"] == "intern":
-        await callback.message.answer("Функция недоступна для роли intern.")
+        await callback.message.answer("⛔ Функция недоступна для роли intern.")
         await callback.answer()
         return
 
     await state.set_state(AddSaleStates.waiting_amount)
-    await callback.message.answer("Введите сумму продажи (например 1500.50)")
+    await callback.message.answer("💸 Введите сумму продажи (например 1500.50)")
     await callback.answer()
 
 
@@ -41,7 +41,7 @@ async def get_sale_amount(message: Message, state: FSMContext) -> None:
     await state.update_data(amount=amount, screenshots=[])
     await state.set_state(AddSaleStates.waiting_screenshots)
     await message.answer(
-        "Отправьте один или несколько скриншотов продажи, затем нажмите «Готово».",
+        "🖼 Отправьте один или несколько скриншотов продажи, затем нажмите «Готово».",
         reply_markup=done_screenshots_button(),
     )
 
@@ -52,7 +52,7 @@ async def collect_screenshots(message: Message, state: FSMContext) -> None:
     screenshots: list[str] = data.get("screenshots", [])
     screenshots.append(message.photo[-1].file_id)
     await state.update_data(screenshots=screenshots)
-    await message.answer(f"Скриншот добавлен. Всего: {len(screenshots)}")
+    await message.answer(f"✅ Скриншот добавлен. Всего: {len(screenshots)}")
 
 
 @router.callback_query(AddSaleStates.waiting_screenshots, F.data == "sale_done")
@@ -93,7 +93,7 @@ async def finish_sale(callback: CallbackQuery, state: FSMContext, db: Database, 
         )
 
     await state.clear()
-    await callback.message.answer("Продажа отправлена администраторам на проверку.")
+    await callback.message.answer("✅ Продажа отправлена администраторам на проверку.")
     await callback.answer()
 
 
@@ -106,7 +106,7 @@ async def my_sales_history(callback: CallbackQuery, db: Database, db_user: dict 
     if not sales:
         await callback.message.answer("За текущий месяц продаж пока нет.")
     else:
-        text = ["История продаж за месяц:"]
+        text = ["📜 История продаж за месяц:"]
         for s in sales[:20]:
             text.append(f"#{s['id']} | {s['amount']:.2f} | {s['status']} | {s['created_at']}")
         await callback.message.answer("\n".join(text))
